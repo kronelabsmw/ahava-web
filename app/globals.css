@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdfbf9;
+  --foreground: #2c2420;
+  --card: #ffffff;
+  --card-foreground: #2c2420;
+  --popover: #ffffff;
+  --popover-foreground: #2c2420;
+  --primary: #b89586;
+  --primary-foreground: #ffffff;
+  --secondary: #f3ece6;
+  --secondary-foreground: #3d342e;
+  --muted: #ebe4dd;
+  --muted-foreground: #5c524a;
+  --accent: #dcc9be;
+  --accent-foreground: #3d342e;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #b8a99e;
+  --input: #b8a99e;
+  --ring: #b89586;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: #161412;
+  --foreground: #f5f0eb;
+  --card: #1c1917;
+  --card-foreground: #f5f0eb;
+  --popover: #1c1917;
+  --popover-foreground: #f5f0eb;
+  --primary: #d4b8ac;
+  --primary-foreground: #1a1614;
+  --secondary: #2e2824;
+  --secondary-foreground: #f5f0eb;
+  --muted: #2e2824;
+  --muted-foreground: #a89e96;
+  --accent: #3a332e;
+  --accent-foreground: #f5f0eb;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #4a4038;
+  --input: #4a4038;
+  --ring: #d4b8ac;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-outfit);
+  --font-serif: var(--font-cormorant);
+  --font-heading: var(--font-outfit);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-serif {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
