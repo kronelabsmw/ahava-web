@@ -1,4 +1,4 @@
-# AHAVA Weddings - Project Brief & Build Specification
+# AHAVAH Weddings - Project Brief & Build Specification
 
 Use this document as the single source of truth when creating the **AHAVAH BRIDAL EMPORIUM** website. It is designed to replicate the architecture, UX patterns, and admin capabilities of the **Aura Shop** (`aurashop`) codebase while extending it for bridal dress hire, fittings, custom orders, and event planning services.
 
