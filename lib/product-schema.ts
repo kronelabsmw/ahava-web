@@ -1,10 +1,21 @@
 import { z } from "zod";
+import { isImageSrc } from "@/lib/media";
 
 const emptyToNull = (val: unknown) =>
   val === "" || val === undefined ? null : val;
 
 const emptyToUndefined = (val: unknown) =>
   val === "" || val === null || val === undefined ? undefined : val;
+
+/** https URL or data:image base64 URI (images stored in Postgres). */
+export const imageSrcSchema = z
+  .string()
+  .refine(isImageSrc, { message: "Each image must be a valid URL or uploaded image" });
+
+export const optionalImageSrc = z
+  .union([z.literal(""), imageSrcSchema])
+  .optional()
+  .nullable();
 
 export const optionalVideoUrl = z.preprocess(
   (val) => (val == null ? "" : val),
@@ -68,7 +79,7 @@ export const adminProductSchema = z.object({
   tags: z.array(z.string()).default([]),
   videoUrl: optionalVideoUrl,
   images: z
-    .array(z.string().url({ message: "Each image must be a valid URL" }))
+    .array(imageSrcSchema)
     .min(1, "Add at least one product image")
     .max(8, "Maximum 8 images allowed"),
   variants: z.array(productVariantSchema).default([]),

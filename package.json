@@ -11,6 +11,9 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
+    "backup:media": "npx tsx scripts/backup-media-and-db.ts",
+    "migrate:inline-images": "npx tsx scripts/inline-images-to-db.ts",
+    "restore:db": "npx tsx scripts/restore-db-from-backup.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

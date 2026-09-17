@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { ShoppingBag, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MediaImage } from "@/components/media-image";
 import { useCartStore } from "@/stores/cart";
 import { useToast } from "@/hooks/use-toast";
 import { cn, formatPrice, getParentCategoryBadge } from "@/lib/utils";
@@ -63,7 +63,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="relative aspect-[3/4]">
             {primaryImage ? (
               <>
-                <Image
+                <MediaImage
                   src={primaryImage}
                   alt={product.name}
                   fill
@@ -74,7 +74,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
                 {secondaryImage && (
-                  <Image
+                  <MediaImage
                     src={secondaryImage}
                     alt=""
                     fill

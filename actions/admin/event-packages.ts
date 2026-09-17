@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { slugify } from "@/lib/utils";
+import { optionalImageSrc } from "@/lib/product-schema";
 
 const packageSchema = z.object({
   name: z.string().min(2),
@@ -13,7 +14,7 @@ const packageSchema = z.object({
   guestCount: z.coerce.number().optional().nullable(),
   servicesIncluded: z.string().min(1),
   additionalCharges: z.string().optional().nullable(),
-  image: z.string().url().optional().nullable().or(z.literal("")),
+  image: optionalImageSrc,
   active: z.coerce.boolean().optional(),
 });
 

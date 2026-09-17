@@ -1,6 +1,7 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { bufferToInlineDataUrl } from "@/lib/inline-image";
 import {
   MAX_IMAGE_BYTES,
   MAX_VIDEO_BYTES,
@@ -55,30 +56,31 @@ function sanitizeFilename(filename: string) {
   return cleaned || "upload";
 }
 
-function uploadErrorResponse(error: unknown) {
+function uploadErrorResponse(error: unknown, kind: "image" | "video") {
   const text = error instanceof Error ? error.message : String(error);
   const lower = text.toLowerCase();
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  if (kind === "video" && !process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json(
       {
         error:
-          "Image uploads are not set up on this site yet. Paste an image URL instead, or ask your administrator to enable Vercel Blob storage.",
+          "Video uploads need Vercel Blob. Paste a video URL instead, or ask your administrator to enable Blob storage.",
       },
       { status: 503 }
     );
   }
 
   if (
-    lower.includes("blob_read_write_token") ||
-    lower.includes("no token") ||
-    lower.includes("unauthorized") ||
-    lower.includes("access denied")
+    kind === "video" &&
+    (lower.includes("blob_read_write_token") ||
+      lower.includes("no token") ||
+      lower.includes("unauthorized") ||
+      lower.includes("access denied"))
   ) {
     return NextResponse.json(
       {
         error:
-          "Upload storage is not configured correctly. Paste an image URL instead for now.",
+          "Video storage is not configured correctly. Paste a video URL instead for now.",
       },
       { status: 503 }
     );
@@ -95,7 +97,9 @@ function uploadErrorResponse(error: unknown) {
     return NextResponse.json(
       {
         error:
-          "That file type is not supported. Use JPG, PNG, or WebP for images.",
+          kind === "image"
+            ? "That file type is not supported. Use JPG, PNG, WebP, or GIF."
+            : "That file type is not supported. Use MP4, WebM, or MOV.",
       },
       { status: 400 }
     );
@@ -106,7 +110,9 @@ function uploadErrorResponse(error: unknown) {
   return NextResponse.json(
     {
       error:
-        "We couldn't upload that file. Try again, use a smaller file, or paste an image URL instead.",
+        kind === "image"
+          ? "We couldn't process that image. Try again or use a smaller photo."
+          : "We couldn't upload that video. Try again, use a smaller file, or paste a URL instead.",
     },
     { status: 500 }
   );
@@ -139,18 +145,18 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  if (kind === "video" && !process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json(
       {
         error:
-          "Image uploads are not set up on this site yet. Paste an image URL instead, or ask your administrator to enable Vercel Blob storage.",
+          "Video uploads need Vercel Blob. Paste a video URL instead, or ask your administrator to enable Blob storage.",
       },
       { status: 503 }
     );
   }
 
   try {
-    const buffer = await request.arrayBuffer();
+    const buffer = Buffer.from(await request.arrayBuffer());
     const maxBytes = kind === "video" ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
 
     if (buffer.byteLength === 0) {
@@ -187,8 +193,15 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
+    // Images → compressed base64 data URI (stored in Postgres, not Blob)
+    if (kind === "image") {
+      const { dataUrl } = await bufferToInlineDataUrl(buffer, contentType);
+      return NextResponse.json({ url: dataUrl });
+    }
+
+    // Videos → Vercel Blob only
     const safeName = sanitizeFilename(filename);
-    const pathname = `ahava/${kind}s/${Date.now()}-${safeName}`;
+    const pathname = `ahava/videos/${Date.now()}-${safeName}`;
 
     const blob = await put(pathname, buffer, {
       access: "public",
@@ -198,6 +211,6 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json({ url: blob.url });
   } catch (error) {
-    return uploadErrorResponse(error);
+    return uploadErrorResponse(error, kind);
   }
 }

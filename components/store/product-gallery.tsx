@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight, Expand, Play, X } from "lucide-react";
+import { MediaImage } from "@/components/media-image";
 import { cn } from "@/lib/utils";
 import { storeCardClass, storeCardHoverClass, storeTextMutedClass } from "@/components/store/store-ui";
 
@@ -93,7 +93,7 @@ export function ProductGallery({
                 aria-label={`View image ${i + 1}`}
                 aria-current={activeIndex === i && !showVideo ? "true" : undefined}
               >
-                <Image
+                <MediaImage
                   src={img.url}
                   alt={img.alt || `${productName} ${i + 1}`}
                   fill
@@ -134,7 +134,7 @@ export function ProductGallery({
                 playsInline
               />
             ) : activeImage ? (
-              <Image
+              <MediaImage
                 src={activeImage.url}
                 alt={activeImage.alt || productName}
                 fill
@@ -225,7 +225,7 @@ export function ProductGallery({
           )}
 
           <div className="relative h-full max-h-[90vh] w-full max-w-5xl">
-            <Image
+            <MediaImage
               src={activeImage.url}
               alt={activeImage.alt || productName}
               fill

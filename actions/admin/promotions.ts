@@ -4,12 +4,13 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { slugify } from "@/lib/utils";
+import { optionalImageSrc } from "@/lib/product-schema";
 
 const promotionSchema = z.object({
   title: z.string().min(2),
   slug: z.string().min(2).optional(),
   description: z.string().min(10),
-  image: z.string().url().optional().nullable().or(z.literal("")),
+  image: optionalImageSrc,
   discount: z.coerce.number().min(0).max(100).optional().nullable(),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),

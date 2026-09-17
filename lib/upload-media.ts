@@ -80,7 +80,11 @@ export async function uploadMediaFile(
     );
   }
 
-  if (typeof data.url !== "string" || !data.url) {
+  if (
+    typeof data.url !== "string" ||
+    !data.url ||
+    (!data.url.startsWith("http") && !data.url.startsWith("data:"))
+  ) {
     throw new Error("Upload succeeded but no file URL was returned. Please try again.");
   }
 

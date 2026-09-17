@@ -34,6 +34,7 @@ export function absoluteUrl(path = "/"): string {
 }
 
 function toAbsoluteImage(src: string): string {
+  if (src.startsWith("data:")) return absoluteUrl(DEFAULT_OG_IMAGE_PATH);
   if (src.startsWith("http://") || src.startsWith("https://")) return src;
   return absoluteUrl(src);
 }

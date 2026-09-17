@@ -104,7 +104,7 @@ model Category {
   name        String
   slug        String     @unique
   description String?
-  image       String?
+  image       String?    @db.Text
   parentId    String?
   parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children    Category[] @relation("CategoryHierarchy")
@@ -153,7 +153,7 @@ model Product {
 
 model ProductImage {
   id        String  @id @default(cuid())
-  url       String
+  url       String  @db.Text
   alt       String?
   order     Int     @default(0)
   productId String
@@ -175,7 +175,7 @@ model Promotion {
   title       String
   slug        String    @unique
   description String    @db.Text
-  image       String?
+  image       String?   @db.Text
   discount    Int?
   active      Boolean   @default(true)
   startDate   DateTime?
@@ -244,7 +244,7 @@ model EventPackage {
   servicesIncluded  String[]
   guestCount        Int?
   additionalCharges String?  @db.Text
-  image             String?
+  image             String?                @db.Text
   active            Boolean                @default(true)
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt

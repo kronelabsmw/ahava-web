@@ -1,9 +1,9 @@
 "use client";
 
 import { useId, useState } from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MediaImage } from "@/components/media-image";
 import { adminInputClass, adminOutlineButtonClass } from "@/components/admin/admin-form";
 import { uploadImageFile } from "@/lib/upload-media";
 import { ImageIcon, Loader2, Upload, X } from "lucide-react";
@@ -63,7 +63,7 @@ export function ImageField({
             aspectClass
           )}
         >
-          <Image
+          <MediaImage
             src={value}
             alt={label}
             fill

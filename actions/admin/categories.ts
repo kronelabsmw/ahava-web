@@ -3,12 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { optionalImageSrc } from "@/lib/product-schema";
 
 const categorySchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1, "Slug is required"),
   description: z.string().optional().nullable(),
-  image: z.string().url().optional().nullable().or(z.literal("")),
+  image: optionalImageSrc,
   parentId: z.string().optional().nullable().or(z.literal("none")),
 });
 

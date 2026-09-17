@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MediaImage } from "@/components/media-image";
 import { BackgroundMedia } from "@/components/store/background-media";
 import { BrandLogo } from "@/components/store/brand-logo";
 import { storeHeadingLgClass } from "@/components/store/store-ui";
@@ -51,7 +51,7 @@ export function HeroSlideshow({ images, tagline, videoUrl }: HeroSlideshowProps)
         </>
       ) : (
         <>
-          <Image
+          <MediaImage
             src={slides[current] as string}
             alt="Bridal lookbook"
             fill

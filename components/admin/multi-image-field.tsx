@@ -1,9 +1,9 @@
 "use client";
 
 import { useId, useState } from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MediaImage } from "@/components/media-image";
 import {
   adminInputClass,
   adminOutlineButtonClass,
@@ -101,7 +101,7 @@ export function MultiImageField({
               key={`${url}-${index}`}
               className="group relative aspect-video overflow-hidden rounded-xl border border-[#E8EBE4] bg-[#EEF2E8]"
             >
-              <Image
+              <MediaImage
                 src={url}
                 alt={`Image ${index + 1}`}
                 fill
