@@ -39,6 +39,14 @@ export const storeTierStyles = {
     inset: "bg-[#3d342e]/5",
     header: "from-[#e8ddd4] via-card to-secondary/50",
   },
+  custom: {
+    badge: "bg-background/90 text-primary shadow-sm backdrop-blur-sm ring-1 ring-primary/30",
+    bar: "bg-primary/70",
+    border: "border-primary/30",
+    accent: "text-primary",
+    inset: "bg-primary/6",
+    header: "from-secondary/80 via-card to-primary/10",
+  },
   default: {
     badge: "bg-background/90 text-foreground shadow-sm backdrop-blur-sm",
     bar: "bg-border",
@@ -53,15 +61,22 @@ export const packageTierLabels: Record<keyof typeof storeTierStyles, string> = {
   silver: "Essential",
   gold: "Popular",
   platinum: "Premium",
+  custom: "Bespoke",
   default: "Package",
 };
 
 export function getPackageTierKey(name: string): keyof typeof storeTierStyles {
   const lower = name.toLowerCase();
+  if (lower.includes("custom") || lower.includes("bespoke")) return "custom";
   if (lower.includes("platinum")) return "platinum";
   if (lower.includes("gold")) return "gold";
   if (lower.includes("silver")) return "silver";
   return "default";
+}
+
+export function isCustomPackage(nameOrSlug: string) {
+  const lower = nameOrSlug.toLowerCase();
+  return lower.includes("custom") || lower.includes("bespoke");
 }
 
 export function storeRichCard(
