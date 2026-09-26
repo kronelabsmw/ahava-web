@@ -1,4 +1,4 @@
-# AHAVAH BRIDAL EMPORIUM 1
+# AHAVAH BRIDAL EMPORIUM
 
 Mobile-first wedding platform for bridal dress hire, custom orders, fittings, and event planning.
 
