@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { ImageField } from "@/components/admin/image-field";
+import { MultiImageField } from "@/components/admin/multi-image-field";
 import {
   createEventPackage,
   deleteEventPackage,
@@ -44,9 +44,17 @@ type EventPackageFormProps = {
     servicesIncluded: string[];
     additionalCharges?: string | null;
     image?: string | null;
+    images?: string[];
     active: boolean;
   };
 };
+
+function initialImages(data?: EventPackageFormProps["initialData"]) {
+  if (!data) return [];
+  if (data.images && data.images.length > 0) return data.images.slice(0, 3);
+  if (data.image) return [data.image];
+  return [];
+}
 
 export function EventPackageForm({ initialData }: EventPackageFormProps) {
   const router = useRouter();
@@ -67,7 +75,7 @@ export function EventPackageForm({ initialData }: EventPackageFormProps) {
   const [additionalCharges, setAdditionalCharges] = useState(
     initialData?.additionalCharges || ""
   );
-  const [image, setImage] = useState(initialData?.image || "");
+  const [images, setImages] = useState<string[]>(() => initialImages(initialData));
   const [active, setActive] = useState(initialData?.active ?? true);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,7 +93,8 @@ export function EventPackageForm({ initialData }: EventPackageFormProps) {
     if (guestCount) formData.append("guestCount", guestCount);
     formData.append("servicesIncluded", servicesIncluded);
     formData.append("additionalCharges", additionalCharges);
-    formData.append("image", image);
+    formData.append("images", JSON.stringify(images));
+    formData.append("image", images[0] || "");
     if (active) formData.append("active", "true");
 
     const result = isEdit
@@ -180,6 +189,9 @@ export function EventPackageForm({ initialData }: EventPackageFormProps) {
                     required
                     className={adminInputClass}
                   />
+                  <p className="text-xs text-[#8A9480]">
+                    Use 0 for Custom packages to show &quot;Quote on request&quot;.
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="guestCount" className="text-[#2D3328]">
@@ -230,14 +242,16 @@ export function EventPackageForm({ initialData }: EventPackageFormProps) {
             </AdminFormCard>
 
             <AdminFormCard
-              title="Package image"
-              description="Shown on events pages and package cards."
+              title="Package photos"
+              description="Up to 3 images shown in the package header collage on cards and detail pages."
               icon={ImageIcon}
             >
-              <ImageField
-                label="Cover image"
-                value={image}
-                onChange={setImage}
+              <MultiImageField
+                label="Header images"
+                description="First image is also used as the cover photo."
+                value={images}
+                onChange={setImages}
+                maxImages={3}
               />
             </AdminFormCard>
           </>

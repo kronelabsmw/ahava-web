@@ -22,6 +22,7 @@ export async function updateSettings(formData: FormData) {
     const tagline = formData.get("tagline") as string;
     const whatsapp = formData.get("whatsapp") as string;
     const heroImages = formData.get("heroImages") as string;
+    const eventsGallery = formData.get("eventsGallery") as string;
     const pageImages = formData.get("pageImages") as string;
     const siteVideos = formData.get("siteVideos") as string;
 
@@ -33,6 +34,7 @@ export async function updateSettings(formData: FormData) {
       { key: "tagline", value: tagline },
       { key: "whatsapp", value: whatsapp },
       { key: "heroImages", value: heroImages },
+      { key: "eventsGallery", value: eventsGallery },
       { key: "pageImages", value: pageImages },
       { key: "siteVideos", value: siteVideos },
     ];

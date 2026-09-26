@@ -35,6 +35,7 @@ type SettingsFormProps = {
     tagline?: string;
     whatsapp?: string;
     heroImages?: string[];
+    eventsGallery?: string[];
     pageImages?: PageImages;
     siteVideos?: SiteVideos;
   };
@@ -46,6 +47,9 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   const [whatsapp, setWhatsapp] = useState(initialSettings.whatsapp || "");
   const [heroImages, setHeroImages] = useState<string[]>(
     initialSettings.heroImages || []
+  );
+  const [eventsGallery, setEventsGallery] = useState<string[]>(
+    initialSettings.eventsGallery || []
   );
   const [pageImages, setPageImages] = useState<PageImages>(
     initialSettings.pageImages || ({} as PageImages)
@@ -77,6 +81,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
       formData.append("tagline", tagline);
       formData.append("whatsapp", whatsapp);
       formData.append("heroImages", JSON.stringify(heroImages));
+      formData.append("eventsGallery", JSON.stringify(eventsGallery));
       formData.append("pageImages", JSON.stringify(pageImages));
       formData.append("siteVideos", JSON.stringify(siteVideos));
 
@@ -169,7 +174,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
 
         <AdminFormSection
           title="Homepage & events videos"
-          description="Optional short looping videos for page backgrounds."
+          description="Homepage background video and the Events page highlight reel. Replace the events video anytime to feature a different celebration."
           icon={Film}
         >
           <div className="grid gap-4 md:grid-cols-2">
@@ -186,6 +191,18 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
               />
             ))}
           </div>
+        </AdminFormSection>
+
+        <AdminFormSection
+          title="Events photo gallery"
+          description="Carousel photos at the bottom of the Events page. Add, remove, or reorder as new events happen."
+          icon={Images}
+        >
+          <MultiImageField
+            value={eventsGallery}
+            onChange={setEventsGallery}
+            maxImages={24}
+          />
         </AdminFormSection>
 
         <AdminFormSection

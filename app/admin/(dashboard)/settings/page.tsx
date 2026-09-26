@@ -9,7 +9,7 @@ export default async function AdminSettingsPage() {
     <div>
       <AdminPageHeader
         title="Settings"
-        description="Manage shop details, homepage hero media, background videos, and page banners."
+        description="Manage shop details, homepage hero media, events highlight video, photo gallery, and page banners."
       />
       <SettingsForm initialSettings={settings} />
     </div>

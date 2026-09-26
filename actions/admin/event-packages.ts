@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { slugify } from "@/lib/utils";
-import { optionalImageSrc } from "@/lib/product-schema";
+import { imageSrcSchema, optionalImageSrc } from "@/lib/product-schema";
 
 const packageSchema = z.object({
   name: z.string().min(2),
@@ -15,6 +15,7 @@ const packageSchema = z.object({
   servicesIncluded: z.string().min(1),
   additionalCharges: z.string().optional().nullable(),
   image: optionalImageSrc,
+  images: z.string().optional().nullable(),
   active: z.coerce.boolean().optional(),
 });
 
@@ -23,6 +24,28 @@ function parseServices(raw: string) {
     .split("\n")
     .map((s) => s.trim())
     .filter(Boolean);
+}
+
+function parseImages(raw: string | null | undefined, legacyImage?: string | null) {
+  let images: string[] = [];
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        images = parsed
+          .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+          .map((item) => item.trim())
+          .filter((item) => imageSrcSchema.safeParse(item).success)
+          .slice(0, 3);
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  if (images.length === 0 && legacyImage?.trim()) {
+    images = [legacyImage.trim()];
+  }
+  return images;
 }
 
 export async function createEventPackage(formData: FormData) {
@@ -37,6 +60,8 @@ export async function createEventPackage(formData: FormData) {
     const existing = await prisma.eventPackage.findUnique({ where: { slug } });
     if (existing) slug = `${slug}-${Date.now()}`;
 
+    const images = parseImages(validated.images, validated.image);
+
     await prisma.eventPackage.create({
       data: {
         name: validated.name.trim(),
@@ -46,7 +71,8 @@ export async function createEventPackage(formData: FormData) {
         guestCount: validated.guestCount ?? null,
         servicesIncluded: parseServices(validated.servicesIncluded),
         additionalCharges: validated.additionalCharges?.trim() || null,
-        image: validated.image?.trim() || null,
+        image: images[0] ?? (validated.image?.trim() || null),
+        images,
         active: validated.active ?? true,
       },
     });
@@ -80,6 +106,8 @@ export async function updateEventPackage(id: string, formData: FormData) {
       if (conflict) slug = `${slug}-${Date.now()}`;
     }
 
+    const images = parseImages(validated.images, validated.image);
+
     await prisma.eventPackage.update({
       where: { id },
       data: {
@@ -90,7 +118,8 @@ export async function updateEventPackage(id: string, formData: FormData) {
         guestCount: validated.guestCount ?? null,
         servicesIncluded: parseServices(validated.servicesIncluded),
         additionalCharges: validated.additionalCharges?.trim() || null,
-        image: validated.image?.trim() || null,
+        image: images[0] ?? (validated.image?.trim() || null),
+        images,
         active: validated.active ?? true,
       },
     });
