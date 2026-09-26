@@ -1,6 +1,7 @@
-import { storePanelClass, storeHeadingSmClass } from "@/components/store/store-ui";
 import { Check } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { isCustomPackage } from "@/components/store/store-cards";
+import { storePanelClass, storeHeadingSmClass } from "@/components/store/store-ui";
 
 interface PackageComparisonTableProps {
   packages: Array<{
@@ -25,7 +26,7 @@ export function PackageComparisonTable({ packages }: PackageComparisonTableProps
       <div className="mb-8">
         <h3 className={storeHeadingSmClass}>Compare packages</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          What is included in each tier
+          What is included in each option — including Custom
         </p>
       </div>
       <div className={`overflow-x-auto ${storePanelClass}`}>
@@ -35,14 +36,18 @@ export function PackageComparisonTable({ packages }: PackageComparisonTableProps
               <th className="pb-4 text-left font-normal text-muted-foreground w-1/3">
                 Service
               </th>
-              {packages.map((pkg) => (
-                <th key={pkg.id} className="pb-4 text-center text-base font-semibold text-foreground">
-                  <div>{pkg.name.replace(" Wedding Package", "").replace(" Package", "")}</div>
-                  <div className="mt-1 text-sm font-normal text-muted-foreground">
-                    {formatPrice(Number(pkg.price))}
-                  </div>
-                </th>
-              ))}
+              {packages.map((pkg) => {
+                const custom = isCustomPackage(pkg.name) || isCustomPackage(pkg.slug);
+                const priceNum = Number(pkg.price);
+                return (
+                  <th key={pkg.id} className="pb-4 text-center text-base font-semibold text-foreground">
+                    <div>{pkg.name.replace(" Wedding Package", "").replace(" Package", "")}</div>
+                    <div className="mt-1 text-sm font-normal text-muted-foreground">
+                      {custom || priceNum <= 0 ? "Quote on request" : formatPrice(priceNum)}
+                    </div>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
@@ -51,10 +56,14 @@ export function PackageComparisonTable({ packages }: PackageComparisonTableProps
                 <td className="py-3 pr-4 font-normal text-foreground">{service}</td>
                 {packages.map((pkg) => {
                   const included = pkg.servicesIncluded.includes(service);
+                  const custom = isCustomPackage(pkg.name) || isCustomPackage(pkg.slug);
                   return (
                     <td key={pkg.id} className="py-3 text-center">
                       {included ? (
-                        <Check className="mx-auto h-4 w-4 text-foreground/70" aria-label="Included" />
+                        <Check
+                          className="mx-auto h-4 w-4 text-foreground/70"
+                          aria-label={custom ? "Available" : "Included"}
+                        />
                       ) : (
                         <span className="text-muted-foreground/25" aria-label="Not included">
                           ·
@@ -71,3 +80,4 @@ export function PackageComparisonTable({ packages }: PackageComparisonTableProps
     </div>
   );
 }
+
