@@ -6,7 +6,7 @@ import { EMAILS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { EventPackageCard } from "@/components/store/event-package-card";
 import { PackageComparisonTable } from "@/components/store/package-comparison-table";
-import { PageBreadcrumb, SectionHeading } from "@/components/store/section-heading";
+import { PageBreadcrumb } from "@/components/store/section-heading";
 import { StoreContainer } from "@/components/store/store-container";
 import { cn } from "@/lib/utils";
 import { CalendarHeart, MessageCircle, Mail } from "lucide-react";
@@ -17,7 +17,7 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildPageMetadata({
   title: "Event Packages",
   description:
-    "Compare AHAVAH wedding and event packages — curated planning services sized for your guest count and celebration.",
+    "Compare AHAVAH wedding and event packages — Silver, Gold, Platinum, and Custom plans sized for your celebration.",
   path: "/events/packages",
 });
 
@@ -40,17 +40,28 @@ export default async function EventPackagesPage() {
           Event Packages
         </h1>
         <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
-          Choose a curated tier or contact us for a custom plan built around your vision.
+          Four options: Silver, Gold, Platinum, and Custom. Choose a curated tier or tell us
+          exactly what you need — you are never limited to the three standard packages.
         </p>
       </div>
 
       {packages.length > 0 ? (
         <>
-          <div className="grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+          <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4 md:gap-4">
             {packages.map((pkg) => (
               <EventPackageCard
                 key={pkg.id}
-                pkg={pkg}
+                pkg={{
+                  id: pkg.id,
+                  name: pkg.name,
+                  slug: pkg.slug,
+                  description: pkg.description,
+                  price: Number(pkg.price),
+                  guestCount: pkg.guestCount,
+                  image: pkg.image,
+                  images: pkg.images,
+                  servicesIncluded: pkg.servicesIncluded,
+                }}
                 featured={pkg.slug === featuredSlug}
                 showServices
               />
@@ -61,11 +72,11 @@ export default async function EventPackagesPage() {
 
           <section className={`mt-12 text-center ${storePanelClass} bg-secondary/50`}>
             <h2 className={cn(storeHeadingSmClass, "mb-3 md:text-3xl")}>
-              Need something bespoke?
+              Start with Custom
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto mb-6">
-              Not sure which tier fits? We can mix services or create a fully custom package for
-              your wedding or special event.
+              Already know you need a mix of services, a different guest count, or something
+              entirely unique? Open the Custom package or message us directly.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button asChild variant="whatsapp">

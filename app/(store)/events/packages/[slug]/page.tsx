@@ -25,7 +25,7 @@ export async function generateMetadata({
     title: pkg.name,
     description: pkg.description.slice(0, 160),
     path: `/events/packages/${pkg.slug}`,
-    images: pkg.image ? [pkg.image] : undefined,
+    images: pkg.image ? [pkg.image] : pkg.images?.length ? pkg.images : undefined,
   });
 }
 
@@ -38,7 +38,7 @@ export default async function EventPackageDetailPage({ params }: PackagePageProp
   ]);
   if (!pkg) notFound();
 
-  const relatedPackages = allPackages.filter((p) => p.slug !== slug).slice(0, 2);
+  const relatedPackages = allPackages.filter((p) => p.slug !== slug).slice(0, 3);
   const featuredSlug = allPackages.find((p) => p.name.toLowerCase().includes("gold"))?.slug;
 
   const inquiryUrl = whatsappEventPackageInquiry(
@@ -85,11 +85,21 @@ export default async function EventPackageDetailPage({ params }: PackagePageProp
               View all packages
             </Link>
           </div>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {relatedPackages.map((related) => (
               <EventPackageCard
                 key={related.id}
-                pkg={related}
+                pkg={{
+                  id: related.id,
+                  name: related.name,
+                  slug: related.slug,
+                  description: related.description,
+                  price: Number(related.price),
+                  guestCount: related.guestCount,
+                  image: related.image,
+                  images: related.images,
+                  servicesIncluded: related.servicesIncluded,
+                }}
                 featured={related.slug === featuredSlug}
                 showServices={false}
               />
