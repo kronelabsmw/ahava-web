@@ -4,7 +4,7 @@ Mobile-first wedding platform for bridal dress hire, custom orders, fittings, an
 
 ## Stack
 
-- Next.js 16 (App Router) + React 19 + TypeScript
+- Next.js 16 (App Router) + React 19 + TypeScript.
 - Tailwind CSS v4 + custom bridal brand theme
 - Prisma 6 + PostgreSQL
 - NextAuth v5 (admin-only)
