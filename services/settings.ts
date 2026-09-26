@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { APP_NAME, APP_TAGLINE, WHATSAPP_FULL } from "@/lib/constants";
 import {
+  DEFAULT_EVENTS_GALLERY,
   DEFAULT_PAGE_IMAGES,
+  parseEventsGallery,
   parsePageImages,
   type PageImages,
 } from "@/lib/page-images";
@@ -16,6 +18,7 @@ export type SiteSettings = {
   tagline: string;
   whatsapp: string;
   heroImages: string[];
+  eventsGallery: string[];
   pageImages: PageImages;
   siteVideos: SiteVideos;
 };
@@ -25,6 +28,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   tagline: APP_TAGLINE,
   whatsapp: WHATSAPP_FULL,
   heroImages: [],
+  eventsGallery: DEFAULT_EVENTS_GALLERY,
   pageImages: DEFAULT_PAGE_IMAGES,
   siteVideos: DEFAULT_SITE_VIDEOS,
 };
@@ -35,6 +39,7 @@ const defaults: Record<string, string> = {
   tagline: APP_TAGLINE,
   whatsapp: WHATSAPP_FULL,
   heroImages: JSON.stringify([]),
+  eventsGallery: JSON.stringify(DEFAULT_EVENTS_GALLERY),
   pageImages: JSON.stringify(DEFAULT_PAGE_IMAGES),
   siteVideos: JSON.stringify(DEFAULT_SITE_VIDEOS),
 };
@@ -48,6 +53,23 @@ export async function getSetting(key: string) {
   }
 }
 
+function parseStringArray(raw: unknown, fallback: string[]): string[] {
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed)
+        ? parsed.filter((item): item is string => typeof item === "string")
+        : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+  if (Array.isArray(raw)) {
+    return raw.filter((item): item is string => typeof item === "string");
+  }
+  return fallback;
+}
+
 export async function getSettings(): Promise<SiteSettings> {
   try {
     const settings = await prisma.setting.findMany();
@@ -56,14 +78,6 @@ export async function getSettings(): Promise<SiteSettings> {
       map[s.key] = s.value;
     });
 
-    if (typeof map.heroImages === "string") {
-      try {
-        map.heroImages = JSON.parse(map.heroImages);
-      } catch {
-        map.heroImages = [];
-      }
-    }
-
     map.pageImages = parsePageImages(map.pageImages);
     map.siteVideos = parseSiteVideos(map.siteVideos);
 
@@ -71,9 +85,8 @@ export async function getSettings(): Promise<SiteSettings> {
       shopName: String(map.shopName ?? DEFAULT_SETTINGS.shopName),
       tagline: String(map.tagline ?? DEFAULT_SETTINGS.tagline),
       whatsapp: String(map.whatsapp ?? DEFAULT_SETTINGS.whatsapp),
-      heroImages: Array.isArray(map.heroImages)
-        ? (map.heroImages as string[])
-        : DEFAULT_SETTINGS.heroImages,
+      heroImages: parseStringArray(map.heroImages, DEFAULT_SETTINGS.heroImages),
+      eventsGallery: parseEventsGallery(map.eventsGallery),
       pageImages: map.pageImages as PageImages,
       siteVideos: map.siteVideos as SiteVideos,
     };
@@ -89,6 +102,11 @@ export async function getHeroImages(): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+export async function getEventsGallery(): Promise<string[]> {
+  const raw = await getSetting("eventsGallery");
+  return parseEventsGallery(raw);
 }
 
 export async function getPageImages(): Promise<PageImages> {
