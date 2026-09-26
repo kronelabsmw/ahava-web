@@ -31,6 +31,7 @@ export type EventPlanningStep = {
   step: string;
   title: string;
   description: string;
+  imageUrl?: string;
 };
 
 type EventPlanningStepsProps = {
@@ -38,33 +39,41 @@ type EventPlanningStepsProps = {
   className?: string;
 };
 
-/** Planning process — vertical timeline beside hero image */
+/** Planning process — each stage with its own image */
 export function EventPlanningSteps({ steps, className }: EventPlanningStepsProps) {
   return (
-    <ol className={cn("relative space-y-0", className)}>
-      {steps.map((item, index) => {
-        const isLast = index === steps.length - 1;
-
-        return (
-          <li key={item.step} className="relative flex gap-5 pb-8 last:pb-0">
-            {!isLast && (
-              <div
-                className="absolute left-[1.125rem] top-10 h-[calc(100%-1rem)] w-px bg-primary/30"
-                aria-hidden
-              />
-            )}
-            <div className="relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground tabular-nums">
-              {item.step}
+    <ol className={cn("grid gap-6 sm:grid-cols-2", className)}>
+      {steps.map((item) => (
+        <li key={item.step}>
+          <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            <div className="relative aspect-[16/10] overflow-hidden bg-muted">
+              {item.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  className="size-full object-cover"
+                />
+              ) : (
+                <div className="flex size-full items-center justify-center bg-secondary/60">
+                  <span className="text-3xl font-bold text-primary/25 tabular-nums">
+                    {item.step}
+                  </span>
+                </div>
+              )}
+              <span className="absolute left-3 top-3 rounded-md bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground tabular-nums">
+                Step {item.step}
+              </span>
             </div>
-            <div className="min-w-0 flex-1 pt-0.5">
+            <div className="flex flex-1 flex-col p-4 sm:p-5">
               <h3 className={cn(storeHeadingXsClass, "text-balance")}>{item.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-foreground/70 text-pretty">
                 {item.description}
               </p>
             </div>
-          </li>
-        );
-      })}
+          </article>
+        </li>
+      ))}
     </ol>
   );
 }
