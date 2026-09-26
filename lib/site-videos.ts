@@ -13,9 +13,9 @@ export const SITE_VIDEO_META: Record<
     path: "/",
   },
   eventsHero: {
-    label: "Events page hero video",
+    label: "Events highlight reel",
     description:
-      "Optional looping background for the Events page banner. Falls back to the events hero image when empty.",
+      "Short highlight video shown at the top of the Events page. Replace anytime to feature a different event.",
     path: "/events",
   },
 };
