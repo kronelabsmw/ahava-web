@@ -245,6 +245,7 @@ model EventPackage {
   guestCount        Int?
   additionalCharges String?  @db.Text
   image             String?                @db.Text
+  images            String[]               @default([])
   active            Boolean                @default(true)
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
