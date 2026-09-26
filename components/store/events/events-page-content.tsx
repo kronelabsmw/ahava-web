@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { BackgroundMedia } from "@/components/store/background-media";
 import { EventPackageCard, type EventPackageCardData } from "@/components/store/event-package-card";
+import { EventGalleryCarousel } from "@/components/store/events/event-gallery-carousel";
+import { EventHighlightVideo } from "@/components/store/events/event-highlight-video";
 import { EventServicesList, EventPlanningSteps } from "@/components/store/events/event-ui";
 import { InquiryForm } from "@/components/store/inquiry-form";
 import { SectionHeader } from "@/components/store/section-header";
@@ -47,14 +49,15 @@ type ProcessStep = {
   step: string;
   title: string;
   description: string;
+  imageUrl?: string;
 };
 
 type EventsPageContentProps = {
   services: string[];
   processSteps: ProcessStep[];
-  processImageUrl: string;
   heroVideoUrl?: string | null;
   heroImageUrl?: string | null;
+  galleryImages: string[];
   packages: EventPackageCardData[];
   featuredSlug?: string;
   whatsappUrl: string;
@@ -64,9 +67,9 @@ type EventsPageContentProps = {
 export function EventsPageContent({
   services,
   processSteps,
-  processImageUrl,
   heroVideoUrl,
   heroImageUrl,
+  galleryImages,
   packages,
   featuredSlug,
   whatsappUrl,
@@ -96,7 +99,6 @@ export function EventsPageContent({
     <>
       <section className="relative flex min-h-[380px] items-end overflow-hidden md:min-h-[440px]">
         <BackgroundMedia
-          videoUrl={heroVideoUrl}
           imageUrl={heroImageUrl}
           alt="AHAVA Events planning"
           overlayClassName="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/40"
@@ -145,6 +147,15 @@ export function EventsPageContent({
           </div>
         </StoreContainer>
       </section>
+
+      {heroVideoUrl?.trim() && (
+        <StoreContainer className="pt-8 md:pt-10">
+          <EventHighlightVideo
+            videoUrl={heroVideoUrl}
+            posterUrl={heroImageUrl}
+          />
+        </StoreContainer>
+      )}
 
       <div ref={tabsRef} className="scroll-mt-20 border-b border-border/80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sticky top-16 z-30">
         <StoreContainer>
@@ -209,26 +220,14 @@ export function EventsPageContent({
               aria-labelledby="events-tab-process"
               className={storeSectionClass}
             >
-              <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10">
-                <div className="order-2 aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-muted shadow-[0_1px_3px_rgba(44,36,32,0.07),0_8px_24px_rgba(44,36,32,0.05)] lg:order-1">
-                  <img
-                    src={processImageUrl}
-                    alt="Elegant wedding reception setup"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-
-                <div className="order-1 lg:order-2">
-                  <SectionHeader
-                    eyebrow="How it works"
-                    title="From first call to final toast"
-                    description="A clear, collaborative process designed to keep planning simple and stress-free."
-                    showAccent={false}
-                    className="mb-10"
-                  />
-                  <EventPlanningSteps steps={processSteps} />
-                </div>
-              </div>
+              <SectionHeader
+                eyebrow="How it works"
+                title="From first call to final toast"
+                description="A clear, collaborative process — each stage with its own visual guide."
+                showAccent={false}
+                className="mb-10"
+              />
+              <EventPlanningSteps steps={processSteps} />
             </section>
           )}
 
@@ -241,9 +240,9 @@ export function EventsPageContent({
             >
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <SectionHeader
-                  eyebrow="Packages"
-                  title="Curated for every celebration"
-                  description="Silver, Gold, and Platinum tiers to match your style and guest count."
+                  eyebrow="Four options"
+                  title="Packages for every celebration"
+                  description="Silver, Gold, Platinum, and a fully Custom plan — choose a curated tier or build something tailored."
                   showAccent={false}
                 />
                 {packages.length > 0 && (
@@ -257,8 +256,8 @@ export function EventsPageContent({
               </div>
 
               {packages.length > 0 ? (
-                <div className="grid items-stretch gap-5 md:grid-cols-3 md:gap-4">
-                  {packages.slice(0, 3).map((pkg) => (
+                <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4 md:gap-4">
+                  {packages.map((pkg) => (
                     <EventPackageCard
                       key={pkg.id}
                       pkg={pkg}
@@ -296,11 +295,24 @@ export function EventsPageContent({
           )}
         </div>
 
+        {galleryImages.length > 0 && (
+          <section className={storeSectionClass}>
+            <SectionHeader
+              eyebrow="From our events"
+              title="Moments we've created"
+              description="Scroll through photos from celebrations we've planned and coordinated."
+              showAccent={false}
+              className="mb-8"
+            />
+            <EventGalleryCarousel images={galleryImages} />
+          </section>
+        )}
+
         <section className={`bg-secondary/60 text-center ${storePanelClass}`}>
           <h2 className={cn("mb-4", storeHeadingMdClass)}>Ready to plan your celebration?</h2>
           <p className="mx-auto mb-8 max-w-lg text-foreground/75">
-            Pick your services, share your wedding scope, and we&apos;ll help you build the right
-            plan — or choose a ready-made package.
+            Pick a ready-made package or choose Custom — we&apos;ll shape the plan around your
+            vision, guest count, and budget.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button variant="whatsapp" size="lg" onClick={() => setInquiryOpen(true)}>
