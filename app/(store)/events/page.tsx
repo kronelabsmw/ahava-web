@@ -1,6 +1,6 @@
 import { EVENT_SERVICES } from "@/lib/constants";
 import { getActiveEventPackages } from "@/services/event-packages";
-import { getEventsGallery, getPageImages, getSiteVideos } from "@/services/settings";
+import { getSettings } from "@/services/settings";
 import { getStorefrontConfig } from "@/services/storefront";
 import { whatsappGeneral } from "@/lib/whatsapp";
 import { EventsPageContent } from "@/components/store/events/events-page-content";
@@ -58,19 +58,18 @@ function serializePackages(
     price: Number(pkg.price),
     guestCount: pkg.guestCount,
     image: pkg.image,
-    images: pkg.images,
+    images: Array.isArray(pkg.images) ? pkg.images : [],
     servicesIncluded: pkg.servicesIncluded,
   }));
 }
 
 export default async function EventsPage() {
-  const [packages, pageImages, siteVideos, galleryImages, config] = await Promise.all([
+  const [packages, settings, config] = await Promise.all([
     getActiveEventPackages(),
-    getPageImages(),
-    getSiteVideos(),
-    getEventsGallery(),
+    getSettings(),
     getStorefrontConfig(),
   ]);
+  const { pageImages, siteVideos, eventsGallery } = settings;
   const featuredSlug = packages.find((p) => p.name.toLowerCase().includes("gold"))?.slug;
 
   const processSteps = PROCESS_STEPS.map(({ imageKey, ...step }) => ({
@@ -84,7 +83,7 @@ export default async function EventsPage() {
       processSteps={processSteps}
       heroVideoUrl={siteVideos.eventsHero}
       heroImageUrl={pageImages.eventsHero}
-      galleryImages={galleryImages}
+      galleryImages={eventsGallery}
       packages={serializePackages(packages)}
       featuredSlug={featuredSlug}
       whatsappUrl={whatsappGeneral(
